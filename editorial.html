@@ -1,0 +1,1460 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yoradel Ambrad — WordPress Developer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #0f0e0c;
+        --paper: #f5f0e8;
+        --paper-dark: #ede8df;
+        --amber: #d4820a;
+        --amber-light: #f5a623;
+        --amber-pale: #fef3dc;
+        --rule: #0f0e0c;
+        --muted: #6b6560;
+        --display: "Bebas Neue", sans-serif;
+        --serif: "DM Serif Display", serif;
+        --mono: "DM Mono", monospace;
+        --body: "DM Sans", sans-serif;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--body);
+        font-size: 16px;
+        line-height: 1.6;
+        overflow-x: hidden;
+        cursor: crosshair;
+      }
+
+      /* NOISE TEXTURE OVERLAY */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 1000;
+        opacity: 0.4;
+      }
+
+      /* SCROLLBAR */
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--paper);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--ink);
+      }
+
+      /* NAV */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: var(--ink);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2.5rem;
+        height: 48px;
+        border-bottom: 3px solid var(--amber);
+      }
+
+      .nav-logo {
+        font-family: var(--display);
+        font-size: 1.3rem;
+        color: var(--paper);
+        letter-spacing: 0.05em;
+      }
+
+      .nav-logo em {
+        color: var(--amber-light);
+        font-style: normal;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        list-style: none;
+      }
+
+      .nav-links a {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        color: var(--paper);
+        text-decoration: none;
+        padding: 0.4rem 1rem;
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+
+      .nav-links a:hover {
+        background: var(--amber);
+        color: var(--ink);
+      }
+
+      .nav-cta {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        background: var(--amber);
+        color: var(--ink);
+        padding: 0.4rem 1rem;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 500;
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+        transition: background 0.15s;
+      }
+
+      .nav-cta:hover {
+        background: var(--amber-light);
+      }
+
+      /* HERO */
+      .hero {
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: 1fr auto;
+        padding-top: 48px;
+        border-bottom: 4px solid var(--ink);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-main {
+        display: grid;
+        grid-template-columns: 1fr 420px;
+        border-bottom: 2px solid var(--ink);
+      }
+
+      .hero-text {
+        padding: 5rem 4rem 4rem;
+        border-right: 2px solid var(--ink);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+
+      .hero-eyebrow {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--muted);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .hero-eyebrow::before {
+        content: "";
+        display: inline-block;
+        width: 32px;
+        height: 2px;
+        background: var(--amber);
+      }
+
+      .hero-name {
+        font-family: var(--display);
+        font-size: clamp(5rem, 10vw, 9rem);
+        line-height: 0.9;
+        letter-spacing: 0.02em;
+        color: var(--ink);
+        margin-bottom: 2rem;
+      }
+
+      .hero-name .line2 {
+        color: var(--amber);
+        display: block;
+        -webkit-text-stroke: 2px var(--amber);
+        color: transparent;
+      }
+
+      .hero-role {
+        font-family: var(--serif);
+        font-size: 1.4rem;
+        font-style: italic;
+        color: var(--muted);
+        margin-bottom: 2rem;
+        max-width: 500px;
+        line-height: 1.4;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 0;
+      }
+
+      .btn-primary {
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        background: var(--ink);
+        color: var(--paper);
+        border: 2px solid var(--ink);
+        padding: 0.8rem 2rem;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 500;
+        transition:
+          background 0.15s,
+          color 0.15s;
+        cursor: crosshair;
+      }
+
+      .btn-primary:hover {
+        background: var(--amber);
+        border-color: var(--amber);
+        color: var(--ink);
+      }
+
+      .btn-secondary {
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        background: transparent;
+        color: var(--ink);
+        border: 2px solid var(--ink);
+        border-left: none;
+        padding: 0.8rem 2rem;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        transition: background 0.15s;
+        cursor: crosshair;
+      }
+
+      .btn-secondary:hover {
+        background: var(--paper-dark);
+      }
+
+      /* HERO SIDEBAR */
+      .hero-sidebar {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .sidebar-block {
+        padding: 2rem;
+        border-bottom: 1px solid var(--ink);
+        flex: 1;
+      }
+
+      .sidebar-label {
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        margin-bottom: 0.75rem;
+      }
+
+      .sidebar-value {
+        font-family: var(--display);
+        font-size: 2.2rem;
+        line-height: 1;
+        color: var(--ink);
+      }
+
+      .sidebar-value.amber {
+        color: var(--amber);
+      }
+
+      .sidebar-sub {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        color: var(--muted);
+        margin-top: 0.4rem;
+      }
+
+      /* HERO TICKER */
+      .hero-ticker {
+        background: var(--ink);
+        color: var(--amber-light);
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.6rem 0;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .ticker-track {
+        display: inline-flex;
+        gap: 3rem;
+        animation: ticker 20s linear infinite;
+      }
+
+      .ticker-track span::before {
+        content: "✦ ";
+        color: var(--amber);
+      }
+
+      @keyframes ticker {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* SECTION WRAPPER */
+      .section-wrap {
+        border-bottom: 4px solid var(--ink);
+      }
+
+      .section-header-bar {
+        background: var(--ink);
+        color: var(--paper);
+        padding: 0.6rem 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 3px solid var(--amber);
+      }
+
+      .section-num {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        color: var(--amber);
+        letter-spacing: 0.1em;
+      }
+
+      .section-name {
+        font-family: var(--display);
+        font-size: 1.6rem;
+        letter-spacing: 0.08em;
+      }
+
+      .section-rule {
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      /* ABOUT */
+      .about-body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .about-left {
+        padding: 4rem 3rem;
+        border-right: 2px solid var(--ink);
+      }
+
+      .about-right {
+        padding: 4rem 3rem;
+      }
+
+      .pullquote {
+        font-family: var(--serif);
+        font-size: 1.6rem;
+        font-style: italic;
+        line-height: 1.4;
+        color: var(--ink);
+        margin-bottom: 2rem;
+        position: relative;
+        padding-left: 2rem;
+      }
+
+      .pullquote::before {
+        content: '"';
+        position: absolute;
+        left: 0;
+        top: -0.5rem;
+        font-size: 4rem;
+        color: var(--amber);
+        font-family: var(--serif);
+        line-height: 1;
+      }
+
+      .about-body-text {
+        font-size: 0.95rem;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .skills-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .skills-table tr {
+        border-bottom: 1px solid var(--ink);
+        transition: background 0.15s;
+      }
+
+      .skills-table tr:last-child {
+        border-bottom: none;
+      }
+      .skills-table tr:hover {
+        background: var(--amber-pale);
+      }
+
+      .skills-table td {
+        padding: 0.9rem 0;
+        font-size: 0.88rem;
+        vertical-align: top;
+      }
+
+      .skills-table td:first-child {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        width: 130px;
+        padding-top: 1rem;
+      }
+
+      .skills-table td:last-child {
+        color: var(--ink);
+        font-weight: 500;
+        line-height: 1.5;
+      }
+
+      /* EXPERIENCE */
+      .exp-body {
+        padding: 0;
+      }
+
+      .exp-row {
+        display: grid;
+        grid-template-columns: 200px 1fr auto;
+        border-bottom: 1px solid rgba(15, 14, 12, 0.2);
+        transition: background 0.15s;
+        cursor: default;
+      }
+
+      .exp-row:last-child {
+        border-bottom: none;
+      }
+      .exp-row:hover {
+        background: var(--amber-pale);
+      }
+
+      .exp-date-col {
+        padding: 2rem 2.5rem;
+        border-right: 1px solid rgba(15, 14, 12, 0.2);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+
+      .exp-date-range {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .exp-current {
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        background: var(--amber);
+        color: var(--ink);
+        padding: 0.15rem 0.5rem;
+        margin-top: 0.5rem;
+        display: inline-block;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .exp-main-col {
+        padding: 2rem 2.5rem;
+        border-right: 1px solid rgba(15, 14, 12, 0.2);
+      }
+
+      .exp-title {
+        font-family: var(--serif);
+        font-size: 1.2rem;
+        color: var(--ink);
+        margin-bottom: 0.2rem;
+      }
+
+      .exp-company-name {
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        color: var(--amber);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 1rem;
+      }
+
+      .exp-points {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+
+      .exp-points li {
+        font-size: 0.87rem;
+        color: var(--muted);
+        padding-left: 1.2rem;
+        position: relative;
+        line-height: 1.5;
+      }
+
+      .exp-points li::before {
+        content: "—";
+        position: absolute;
+        left: 0;
+        color: var(--amber);
+        font-size: 0.8rem;
+      }
+
+      .exp-tag-col {
+        padding: 2rem 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        min-width: 140px;
+      }
+
+      .exp-tag {
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        color: var(--muted);
+        background: var(--paper-dark);
+        border: 1px solid rgba(15, 14, 12, 0.2);
+        padding: 0.25rem 0.5rem;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      /* PROJECTS */
+      .projects-body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .project-card {
+        border-right: 2px solid var(--ink);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .project-card:last-child {
+        border-right: none;
+      }
+
+      .project-num-bar {
+        background: var(--paper-dark);
+        border-bottom: 1px solid var(--ink);
+        padding: 0.6rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .project-num {
+        font-family: var(--display);
+        font-size: 2.5rem;
+        color: var(--ink);
+        opacity: 0.15;
+        line-height: 1;
+      }
+
+      .project-type {
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+      }
+
+      .project-img {
+        width: 100%;
+        aspect-ratio: 16/9;
+        background: var(--paper-dark);
+        border-bottom: 1px solid var(--ink);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .project-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;
+        position: absolute;
+        inset: 0;
+        /* scale down the iframe so the full site fits in the preview */
+        transform: scale(0.5);
+        transform-origin: top left;
+        width: 200%;
+        height: 200%;
+        pointer-events: none;
+      }
+
+      .project-img-fallback {
+        position: absolute;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: var(--paper-dark);
+      }
+
+      .project-img-fallback img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top;
+      }
+
+      /* overlay so card hover still works, not the iframe */
+      .project-img-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        cursor: default;
+      }
+
+      /* diagonal lines pattern fallback bg */
+      .project-img-fallback-empty {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-image: repeating-linear-gradient(
+          45deg,
+          rgba(15, 14, 12, 0.04) 0,
+          rgba(15, 14, 12, 0.04) 1px,
+          transparent 0,
+          transparent 50%
+        );
+        background-size: 12px 12px;
+      }
+
+      .project-img-label {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        color: var(--muted);
+        text-align: center;
+        line-height: 2;
+      }
+
+      .project-img-label strong {
+        display: block;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--amber);
+        margin-bottom: 0.4rem;
+      }
+
+      .project-content {
+        padding: 2rem;
+        flex: 1;
+      }
+
+      .project-title {
+        font-family: var(--serif);
+        font-size: 1.5rem;
+        color: var(--ink);
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+      }
+
+      .project-desc {
+        font-size: 0.88rem;
+        color: var(--muted);
+        line-height: 1.7;
+        margin-bottom: 1.5rem;
+      }
+
+      .project-highlights {
+        list-style: none;
+        margin-bottom: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+
+      .project-highlights li {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        color: var(--ink);
+        padding-left: 1.2rem;
+        position: relative;
+      }
+
+      .project-highlights li::before {
+        content: "→";
+        position: absolute;
+        left: 0;
+        color: var(--amber);
+      }
+
+      .project-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .stack-pill {
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        background: var(--ink);
+        color: var(--paper);
+        padding: 0.2rem 0.6rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .project-footer {
+        border-top: 1px solid rgba(15, 14, 12, 0.15);
+        padding: 1rem 2rem;
+        display: flex;
+        gap: 1rem;
+      }
+
+      .project-link {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        color: var(--ink);
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        border-bottom: 2px solid var(--amber);
+        padding-bottom: 1px;
+        transition: color 0.15s;
+      }
+
+      .project-link:hover {
+        color: var(--amber);
+      }
+
+      /* CONTACT */
+      .contact-body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .contact-left {
+        padding: 5rem 4rem;
+        border-right: 2px solid var(--ink);
+        background: var(--ink);
+        color: var(--paper);
+      }
+
+      .contact-big {
+        font-family: var(--display);
+        font-size: clamp(3rem, 6vw, 5.5rem);
+        line-height: 0.9;
+        letter-spacing: 0.03em;
+        margin-bottom: 2rem;
+      }
+
+      .contact-big em {
+        color: var(--amber-light);
+        font-style: normal;
+        display: block;
+      }
+
+      .contact-sub {
+        font-family: var(--serif);
+        font-size: 1.1rem;
+        font-style: italic;
+        color: rgba(245, 240, 232, 0.6);
+        line-height: 1.6;
+      }
+
+      .contact-right {
+        padding: 5rem 4rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.5rem 0;
+        border-bottom: 1px solid rgba(15, 14, 12, 0.2);
+        text-decoration: none;
+        color: var(--ink);
+        transition: background 0.15s;
+        cursor: crosshair;
+      }
+
+      .contact-item:hover {
+        background: var(--amber-pale);
+        margin: 0 -1rem;
+        padding: 1.5rem 1rem;
+      }
+
+      .contact-item-label {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+      }
+
+      .contact-item-value {
+        font-family: var(--serif);
+        font-size: 1rem;
+        font-style: italic;
+        color: var(--ink);
+      }
+
+      .contact-arrow {
+        font-size: 1.2rem;
+        color: var(--amber);
+      }
+
+      /* FOOTER */
+      footer {
+        background: var(--ink);
+        color: var(--paper);
+        padding: 1.5rem 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+      }
+
+      footer span {
+        color: var(--amber);
+      }
+
+      /* SCROLL REVEAL */
+      .reveal {
+        opacity: 0;
+        transform: translateY(28px);
+        transition:
+          opacity 0.7s ease,
+          transform 0.7s ease;
+      }
+
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 900px) {
+        .hero-main {
+          grid-template-columns: 1fr;
+        }
+        .hero-sidebar {
+          display: none;
+        }
+        .about-body {
+          grid-template-columns: 1fr;
+        }
+        .about-left {
+          border-right: none;
+          border-bottom: 2px solid var(--ink);
+        }
+        .projects-body {
+          grid-template-columns: 1fr;
+        }
+        .project-card {
+          border-right: none;
+          border-bottom: 2px solid var(--ink);
+        }
+        .contact-body {
+          grid-template-columns: 1fr;
+        }
+        .contact-left {
+          border-right: none;
+          border-bottom: 2px solid var(--ink);
+        }
+        .exp-row {
+          grid-template-columns: 1fr;
+        }
+        .exp-date-col {
+          border-right: none;
+          border-bottom: 1px solid rgba(15, 14, 12, 0.15);
+          padding: 1.5rem 2rem 1rem;
+        }
+        .exp-main-col {
+          border-right: none;
+        }
+        .exp-tag-col {
+          border-top: 1px solid rgba(15, 14, 12, 0.15);
+          flex-direction: row;
+          flex-wrap: wrap;
+        }
+        .nav-links {
+          display: none;
+        }
+        .section-header-bar {
+          padding: 0.6rem 1.5rem;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .hero-text {
+          padding: 3rem 1.5rem;
+        }
+        .about-left,
+        .about-right {
+          padding: 2.5rem 1.5rem;
+        }
+        .contact-left,
+        .contact-right {
+          padding: 3rem 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav>
+      <div class="nav-logo">YORS<em>.</em></div>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="resume.pdf" target="_blank" class="nav-cta">↓ Resume</a>
+    </nav>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-main">
+        <div class="hero-text">
+          <div class="hero-eyebrow">
+            WordPress Developer & Automation Specialist — Cebu, PH
+          </div>
+          <h1 class="hero-name">
+            YORADEL
+            <span class="line2">AMBRAD</span>
+          </h1>
+          <p class="hero-role">
+            Building integrated web systems that connect WordPress to the tools
+            businesses actually run on.
+          </p>
+          <div class="hero-actions">
+            <a href="#projects" class="btn-primary">View Work →</a>
+            <a href="#contact" class="btn-secondary">Get in Touch</a>
+          </div>
+        </div>
+
+        <div class="hero-sidebar">
+          <div class="sidebar-block">
+            <div class="sidebar-label">Status</div>
+            <div class="sidebar-value amber">Open</div>
+            <div class="sidebar-sub">Available for full-time roles</div>
+          </div>
+          <div class="sidebar-block">
+            <div class="sidebar-label">Experience</div>
+            <div class="sidebar-value">2+</div>
+            <div class="sidebar-sub">Years shipping real work</div>
+          </div>
+          <div class="sidebar-block">
+            <div class="sidebar-label">Specialization</div>
+            <div
+              class="sidebar-value"
+              style="font-size: 1.4rem; line-height: 1.2"
+            >
+              WordPress<br />+ CRM
+            </div>
+            <div class="sidebar-sub">Integration systems</div>
+          </div>
+          <div class="sidebar-block">
+            <div class="sidebar-label">Location</div>
+            <div class="sidebar-value" style="font-size: 1.3rem">Cebu PH</div>
+            <div class="sidebar-sub">Remote-first</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-ticker">
+        <div class="ticker-track">
+          <span>WordPress</span>
+          <span>Elementor</span>
+          <span>Zoho CRM</span>
+          <span>GoHighLevel</span>
+          <span>n8n Automations</span>
+          <span>Power Automate</span>
+          <span>Custom Plugins</span>
+          <span>WooCommerce</span>
+          <span>AI Agents</span>
+          <span>CRM Integration</span>
+          <span>WordPress</span>
+          <span>Elementor</span>
+          <span>Zoho CRM</span>
+          <span>GoHighLevel</span>
+          <span>n8n Automations</span>
+          <span>Power Automate</span>
+          <span>Custom Plugins</span>
+          <span>WooCommerce</span>
+          <span>AI Agents</span>
+          <span>CRM Integration</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="section-wrap reveal" id="about">
+      <div class="section-header-bar">
+        <span class="section-num">01</span>
+        <span class="section-name">ABOUT</span>
+        <span class="section-rule">yoradel.ambrad / about</span>
+      </div>
+      <div class="about-body">
+        <div class="about-left">
+          <div class="pullquote">
+            Hi, I'm Yors — yes, my name's a bit of a mouthful. I build systems
+            that connect things.
+          </div>
+          <p class="about-body-text">
+            I'm a WordPress developer and automation specialist from Cebu. I
+            specialize in sites that do more than look good — sites that capture
+            leads, process payments, sync CRMs, track affiliates, and display
+            live data. I make architectural decisions, not just implementation
+            ones.<br /><br />When I'm not working, I'm cooking, journaling, or
+            deep-cleaning something. In another life I probably would've been a
+            writer.
+          </p>
+        </div>
+        <div class="about-right">
+          <table class="skills-table">
+            <tr>
+              <td>WordPress</td>
+              <td>
+                Elementor, WooCommerce, Custom Plugins (PHP), SEO, Responsive
+                Design
+              </td>
+            </tr>
+            <tr>
+              <td>CRM</td>
+              <td>
+                Zoho CRM, GoHighLevel, Freshservice, API & Webhook Integrations
+              </td>
+            </tr>
+            <tr>
+              <td>Automation</td>
+              <td>n8n, Power Automate, GHL Workflows, Zapier, Make</td>
+            </tr>
+            <tr>
+              <td>AI</td>
+              <td>GHL Voice AI, Conversation AI, OpenAI API, Support Agents</td>
+            </tr>
+            <tr>
+              <td>Dev</td>
+              <td>JavaScript, React, Next.js, Python, SQL, Power Apps</td>
+            </tr>
+            <tr>
+              <td>Tools</td>
+              <td>Figma, Notion, SharePoint, Power BI, Asana, Git</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPERIENCE -->
+    <div class="section-wrap reveal" id="experience">
+      <div class="section-header-bar">
+        <span class="section-num">02</span>
+        <span class="section-name">EXPERIENCE</span>
+        <span class="section-rule">yoradel.ambrad / experience</span>
+      </div>
+      <div class="exp-body">
+        <div class="exp-row">
+          <div class="exp-date-col">
+            <div class="exp-date-range">Nov 2025<br />Present</div>
+            <div class="exp-current">Current</div>
+          </div>
+          <div class="exp-main-col">
+            <div class="exp-title">WordPress & Automation Specialist</div>
+            <div class="exp-company-name">Level-9 Virtual · Remote</div>
+            <ul class="exp-points">
+              <li>
+                Built financial services platform — Zoho CRM, WooCommerce,
+                token-based access, affiliate tracking, custom admin dashboard
+                via PHP plugins.
+              </li>
+              <li>
+                Translated Figma designs into responsive Elementor sites for
+                multiple clients.
+              </li>
+              <li>
+                Set up GHL Voice AI, Conversation AI agents, and automation
+                workflows.
+              </li>
+            </ul>
+          </div>
+          <div class="exp-tag-col">
+            <span class="exp-tag">WordPress</span>
+            <span class="exp-tag">Zoho</span>
+            <span class="exp-tag">GHL</span>
+            <span class="exp-tag">PHP</span>
+          </div>
+        </div>
+
+        <div class="exp-row">
+          <div class="exp-date-col">
+            <div class="exp-date-range">Aug 2025<br />Oct 2025</div>
+          </div>
+          <div class="exp-main-col">
+            <div class="exp-title">Automations Specialist</div>
+            <div class="exp-company-name">On Call for You Ltd · Remote</div>
+            <ul class="exp-points">
+              <li>
+                Built n8n workflows integrating Shopify (GraphQL) with Twenty
+                CRM for order tracking.
+              </li>
+              <li>
+                Developed AI support agents resolving 80% of inquiries
+                automatically via OpenAI API.
+              </li>
+              <li>
+                Automated Instagram analytics and weather-alert lead scoring
+                workflows.
+              </li>
+            </ul>
+          </div>
+          <div class="exp-tag-col">
+            <span class="exp-tag">n8n</span>
+            <span class="exp-tag">OpenAI</span>
+            <span class="exp-tag">Shopify</span>
+          </div>
+        </div>
+
+        <div class="exp-row">
+          <div class="exp-date-col">
+            <div class="exp-date-range">Mar 2024<br />Jul 2025</div>
+          </div>
+          <div class="exp-main-col">
+            <div class="exp-title">Associate Software Engineer (+ Intern)</div>
+            <div class="exp-company-name">Smartsourcing · Cebu City</div>
+            <ul class="exp-points">
+              <li>
+                Power Platform solution for HR tracking — reduced manual steps
+                by 70%.
+              </li>
+              <li>
+                Automated SharePoint site provisioning — cut onboarding time by
+                50%.
+              </li>
+              <li>
+                Built QR event registration system and lunch ordering system in
+                Power Apps + Power BI.
+              </li>
+              <li>Led company website revamp using WordPress and Figma.</li>
+            </ul>
+          </div>
+          <div class="exp-tag-col">
+            <span class="exp-tag">Power Platform</span>
+            <span class="exp-tag">WordPress</span>
+            <span class="exp-tag">SharePoint</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="section-wrap reveal" id="projects">
+      <div class="section-header-bar">
+        <span class="section-num">03</span>
+        <span class="section-name">PROJECTS</span>
+        <span class="section-rule">yoradel.ambrad / projects</span>
+      </div>
+      <div class="projects-body">
+        <!-- Project 1 -->
+        <div class="project-card">
+          <div class="project-num-bar">
+            <span class="project-num">01</span>
+            <span class="project-type">WordPress · CRM Integration</span>
+          </div>
+          <div class="project-img" id="img-insure">
+            <iframe
+              class="project-iframe"
+              src="https://insurewithcheryl.com"
+              title="insurewithcheryl.com preview"
+              loading="lazy"
+              sandbox="allow-scripts allow-same-origin"
+              onload="this.style.display = 'block'"
+              onerror="
+                this.style.display = 'none';
+                document.getElementById('fallback-insure').style.display =
+                  'flex';
+              "
+            ></iframe>
+            <div
+              class="project-img-fallback"
+              id="fallback-insure"
+              style="display: none; position: absolute; inset: 0"
+            >
+              <img
+                src="assets/insurewithcheryl.png"
+                alt="Insure With Cheryl"
+                style="
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                  object-position: top;
+                "
+                onerror="
+                  this.parentElement.innerHTML =
+                    '<div style=padding:2rem;font-family:monospace;font-size:0.75rem;color:#6b6560;text-align:center><strong style=display:block;color:#d4820a;margin-bottom:0.5rem>LIVE PREVIEW</strong>insurewithcheryl.com</div>'
+                "
+              />
+            </div>
+            <div
+              class="project-img-overlay"
+              style="position: absolute; inset: 0; z-index: 3"
+            ></div>
+          </div>
+          <div class="project-content">
+            <h3 class="project-title">
+              Insure With Cheryl — Financial Services Platform
+            </h3>
+            <p class="project-desc">
+              End-to-end integrated platform for a financial services client.
+              Users purchase financial calculators, run real-time calculations
+              with results synced to Zoho CRM, and access purchased pages via
+              secure token-based links. Includes a full affiliate program with
+              admin dashboard.
+            </p>
+            <ul class="project-highlights">
+              <li>WooCommerce + WooPayments purchase flow</li>
+              <li>Token-based page access post-purchase</li>
+              <li>Affiliate program with referral tracking</li>
+              <li>Custom admin dashboard pulling live Zoho data</li>
+              <li>Custom PHP plugins for CRM sync</li>
+            </ul>
+            <div class="project-stack">
+              <span class="stack-pill">WordPress</span>
+              <span class="stack-pill">Elementor</span>
+              <span class="stack-pill">PHP</span>
+              <span class="stack-pill">WooCommerce</span>
+              <span class="stack-pill">Zoho CRM</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <a
+              href="https://insurewithcheryl.com"
+              target="_blank"
+              class="project-link"
+              >Visit Site ↗</a
+            >
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="project-card">
+          <div class="project-num-bar">
+            <span class="project-num">02</span>
+            <span class="project-type">WordPress · Elementor Build</span>
+          </div>
+          <div class="project-img" id="img-playbook">
+            <iframe
+              class="project-iframe"
+              src="https://salmon-gerbil-520568.hostingersite.com/"
+              title="Client site preview"
+              loading="lazy"
+              sandbox="allow-scripts allow-same-origin"
+              onerror="
+                this.style.display = 'none';
+                document.getElementById('fallback-playbook').style.display =
+                  'flex';
+              "
+            ></iframe>
+            <div
+              class="project-img-fallback"
+              id="fallback-playbook"
+              style="display: none; position: absolute; inset: 0"
+            >
+              <img
+                src="assets/fecplaybook.png"
+                alt="Client Site"
+                style="
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                  object-position: top;
+                "
+                onerror="
+                  this.parentElement.innerHTML =
+                    '<div style=padding:2rem;font-family:monospace;font-size:0.75rem;color:#6b6560;text-align:center><strong style=display:block;color:#d4820a;margin-bottom:0.5rem>LIVE PREVIEW</strong>client-site-01</div>'
+                "
+              />
+            </div>
+            <div
+              class="project-img-overlay"
+              style="position: absolute; inset: 0; z-index: 3"
+            ></div>
+          </div>
+          <div class="project-content">
+            <h3 class="project-title">FEC Playbook — Figma to WordPress</h3>
+            <p class="project-desc">
+              A fully responsive WordPress Elementor site translated from Figma
+              mockups. Focused on clean layout, performance, and pixel-accurate
+              implementation of the client's design vision — including
+              animations, custom styling, and mobile responsiveness.
+            </p>
+            <ul class="project-highlights">
+              <li>Figma-to-WordPress faithful translation</li>
+              <li>Custom animations and scroll interactions</li>
+              <li>Fully responsive across all breakpoints</li>
+              <li>Performance and SEO optimized</li>
+            </ul>
+            <div class="project-stack">
+              <span class="stack-pill">WordPress</span>
+              <span class="stack-pill">Elementor</span>
+              <span class="stack-pill">CSS</span>
+              <span class="stack-pill">Figma</span>
+              <span class="stack-pill">SEO</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <a
+              href="https://salmon-gerbil-520568.hostingersite.com/"
+              target="_blank"
+              class="project-link"
+              >Visit Site ↗</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="section-wrap reveal" id="contact">
+      <div class="section-header-bar">
+        <span class="section-num">04</span>
+        <span class="section-name">CONTACT</span>
+        <span class="section-rule">yoradel.ambrad / contact</span>
+      </div>
+      <div class="contact-body">
+        <div class="contact-left">
+          <div class="contact-big">
+            LET'S
+            <em>WORK</em>
+            TOGETHER
+          </div>
+          <p class="contact-sub">
+            Open to full-time roles, freelance projects, and long-term
+            contracts. Based in Cebu — works remote.
+          </p>
+        </div>
+        <div class="contact-right">
+          <a href="mailto:yoradelambrad@gmail.com" class="contact-item">
+            <div>
+              <div class="contact-item-label">Email</div>
+              <div class="contact-item-value">yoradelambrad@gmail.com</div>
+            </div>
+            <span class="contact-arrow">↗</span>
+          </a>
+          <a
+            href="https://www.linkedin.com/in/yoradel-ambrad-a590ba1b9/"
+            target="_blank"
+            class="contact-item"
+          >
+            <div>
+              <div class="contact-item-label">LinkedIn</div>
+              <div class="contact-item-value">yoradel-ambrad</div>
+            </div>
+            <span class="contact-arrow">↗</span>
+          </a>
+          <a
+            href="https://github.com/yoradel16"
+            target="_blank"
+            class="contact-item"
+          >
+            <div>
+              <div class="contact-item-label">GitHub</div>
+              <div class="contact-item-value">yoradel16</div>
+            </div>
+            <span class="contact-arrow">↗</span>
+          </a>
+          <a href="resume.pdf" target="_blank" class="contact-item">
+            <div>
+              <div class="contact-item-label">Resume</div>
+              <div class="contact-item-value">Download PDF</div>
+            </div>
+            <span class="contact-arrow">↓</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <span>YORADEL AMBRAD</span>
+      <span>Built by <span>Yors</span> · Cebu, PH · 2026</span>
+      <span>WordPress Dev & Automation</span>
+    </footer>
+
+    <script>
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((el) => {
+            if (el.isIntersecting) el.target.classList.add("visible");
+          });
+        },
+        { threshold: 0.08 },
+      );
+
+      document
+        .querySelectorAll(".reveal")
+        .forEach((el) => observer.observe(el));
+
+      // Nav active state
+      const sections = document.querySelectorAll("[id]");
+      window.addEventListener("scroll", () => {
+        let current = "";
+        sections.forEach((s) => {
+          if (window.scrollY >= s.offsetTop - 80) current = s.id;
+        });
+        document.querySelectorAll(".nav-links a").forEach((a) => {
+          a.style.background =
+            a.getAttribute("href") === `#${current}` ? "var(--amber)" : "";
+          a.style.color =
+            a.getAttribute("href") === `#${current}` ? "var(--ink)" : "";
+        });
+      });
+    </script>
+  </body>
+</html>
